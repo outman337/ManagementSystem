@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 
@@ -27,20 +24,33 @@ public class User implements Serializable {
     @JsonIgnore
     private boolean enabled;
 
-    public User() {}
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "apartment_number")
+    private Apartment apartmentNumber;
 
+    public User() {}
 
     private User(Builder builder) {
         this.username = builder.username;
         this.password = builder.password;
         this.enabled = builder.enabled;
+        this.apartmentNumber = builder.apartment_number;
     }
+
 
 
     public String getUsername() {
         return username;
     }
 
+
+    public Apartment getApartmentNumber() {
+        return apartmentNumber;
+    }
+
+    public void setApartmentNumber(Apartment apartmentNumber) {
+        this.apartmentNumber = apartmentNumber;
+    }
 
     public User setUsername(String username) {
         this.username = username;
@@ -81,6 +91,9 @@ public class User implements Serializable {
 
         @JsonProperty("enabled")
         private boolean enabled;
+
+        @JsonProperty("apartment_number")
+        private Apartment apartment_number;
 
 
 

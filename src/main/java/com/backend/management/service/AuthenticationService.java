@@ -5,6 +5,7 @@ import com.backend.management.exception.UserNotExistException;
 import com.backend.management.model.Token;
 import com.backend.management.model.User;
 import com.backend.management.model.UserRole;
+import com.backend.management.repository.UserRepository;
 import com.backend.management.util.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,10 +19,12 @@ public class AuthenticationService {
 
     //这里需要authentication的管理器，我们之前变成bean就是为了在这里使用，然后jwtUtil是用了加密解密的
     private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
-    public AuthenticationService(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+    public AuthenticationService(AuthenticationManager authenticationManager, UserRepository userRepository, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
     }
 
@@ -38,5 +41,9 @@ public class AuthenticationService {
         }
         return new Token(jwtUtil.generateToken(user.getUsername()));
 
+    }
+
+    public User getUser(String username) {
+        return userRepository.findById(username).orElse(null);
     }
 }

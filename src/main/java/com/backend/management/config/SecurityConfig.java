@@ -1,5 +1,6 @@
 package com.backend.management.config;
 
+import com.backend.management.filter.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,8 +8,12 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.sql.DataSource;
 
 import javax.sql.DataSource;
 
@@ -17,8 +22,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final DataSource dataSource;
 
-    public SecurityConfig(DataSource dataSource) {
+    private final JwtFilter jwtFilter;
+
+    public SecurityConfig(DataSource dataSource, JwtFilter jwtFilter) {
         this.dataSource = dataSource;
+        this.jwtFilter = jwtFilter;
     }
     @Override
     protected void configure(HttpSecurity http) throws Exception{
@@ -26,8 +34,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 permitAll().antMatchers(HttpMethod.POST, "/authenticate/*").permitAll().
                 antMatchers("/orders").permitAll()
                 .antMatchers("/orders/*").permitAll()
-
+                .antMatchers("/moveIn").hasAuthority("ROLE_MANAGER")
+                .antMatchers("/moveInAndAssignNewOwner").hasAuthority("ROLE_MANAGER")
+                .antMatchers("/moveOut").hasAuthority("ROLE_MANAGER")
+                .antMatchers("/moveOutAndAssignNewOwner").hasAuthority("ROLE_MANAGER")
+                .antMatchers("/getFlatmates").hasAuthority("ROLE_MANAGER")
                 .anyRequest().authenticated().and().csrf().disable();
+
+        http
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
