@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 @Entity
 @Table(name = "orders")
@@ -18,13 +19,25 @@ public class Order implements Serializable {
     private String issueDescription;
     private String location;
     @JsonProperty("tenant_number")
-    private int tenantNumber;
+    private Long tenantNumber;
+    private String status;
+
+    private String providerNote;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User tenant;
-    @JsonIgnore
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch= FetchType.LAZY)
-    private List<OrderSubmittedDate> submittedDates;
+
+
+    private String provider;
+
+    @JsonProperty("submit_date")
+    private LocalDate submittedDate;
+    @JsonProperty("process_date")
+    private LocalDate processedDate;
+
+    @JsonProperty("complete_date")
+    private LocalDate completeDate;
+
 
     public Order(){}
 
@@ -34,7 +47,12 @@ public class Order implements Serializable {
         this.location = builder.location;
         this.tenantNumber = builder.tenantNumber;
         this.tenant = builder.tenant;
-        this.submittedDates = builder.submittedDates;
+        this.status = builder.status;
+        this.providerNote = builder.providerNote;
+        this.provider = builder.provider;
+        this.processedDate = builder.processDate;
+        this.completeDate = builder.completeDate;
+        this.submittedDate = builder.submittedDate;
     }
 
     public Long getId() {
@@ -49,7 +67,7 @@ public class Order implements Serializable {
         return location;
     }
 
-    public int getTenantNumber() {
+    public Long getTenantNumber() {
         return tenantNumber;
     }
 
@@ -57,9 +75,31 @@ public class Order implements Serializable {
         return tenant;
     }
 
-    public List<OrderSubmittedDate> getSubmittedDates() {
-        return submittedDates;
+    public void setProviderNote(String providerNote) {
+        this.providerNote = providerNote;
     }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setSubmittedDate(LocalDate submittedDate) {
+        this.submittedDate = submittedDate;
+    }
+
+    public void setProcessedDate(LocalDate processedDate) {
+        this.processedDate = processedDate;
+    }
+
+    public void setCompleteDate(LocalDate completeDate) {
+        this.completeDate = completeDate;
+    }
+
+
 
     public static class Builder {
 
@@ -73,13 +113,27 @@ public class Order implements Serializable {
         private String location;
 
         @JsonProperty("tenant_number")
-        private int tenantNumber;
+        private Long tenantNumber;
 
         @JsonProperty("tenant")
         private User tenant;
+        @JsonProperty("status")
+        private String status;
 
-        @JsonProperty("dates")
-        private List<OrderSubmittedDate> submittedDates;
+        @JsonProperty("providerNote")
+        private String providerNote;
+
+        @JsonProperty("provider")
+        private String provider;
+
+        @JsonProperty("process_date")
+        private LocalDate processDate;
+
+        @JsonProperty("complete_date")
+        private LocalDate completeDate;
+
+        @JsonProperty("submit_date")
+        private LocalDate submittedDate;
 
         public Builder setId(Long id) {
             this.id = id;
@@ -96,7 +150,7 @@ public class Order implements Serializable {
             return this;
         }
 
-        public Builder setTenantNumber(int tenantNumber) {
+        public Builder setTenantNumber(Long tenantNumber) {
             this.tenantNumber = tenantNumber;
             return this;
         }
@@ -106,8 +160,33 @@ public class Order implements Serializable {
             return this;
         }
 
-        public Builder setRSubmittedDates(List<OrderSubmittedDate> submittedDates) {
-            this.submittedDates = submittedDates;
+        public Builder setStatus(String status){
+            this.status = status;
+            return this;
+        }
+
+        public Builder setProviderNote(String providerNote){
+            this.providerNote = providerNote;
+            return this;
+        }
+
+        public Builder setProvider(String provider){
+            this.provider = provider;
+            return this;
+        }
+
+        public Builder setProcessDate(LocalDate processDate){
+            this.processDate = processDate;
+            return this;
+        }
+
+        public Builder setCompleteDate(LocalDate complete_date) {
+            this.completeDate = complete_date;
+            return this;
+        }
+
+        public Builder setSubmittedDate(LocalDate submit_date) {
+            this.submittedDate = submit_date;
             return this;
         }
 
