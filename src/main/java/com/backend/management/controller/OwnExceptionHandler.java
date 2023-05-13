@@ -1,5 +1,6 @@
 package com.backend.management.controller;
 
+import com.backend.management.exception.MaintenanceAlreadyExistException;
 import com.backend.management.exception.OrderNotExistException;
 import com.backend.management.exception.UserAlreadyExistException;
 import com.backend.management.exception.UserNotExistException;
@@ -25,5 +26,8 @@ public class OwnExceptionHandler {
     public final ResponseEntity<String>handleStayNotExistExceptions(Exception ex, WebRequest request) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
-
+    @ExceptionHandler(MaintenanceAlreadyExistException.class)
+    public final ResponseEntity<String>handleMaintenanceAlreadyExistExceptions(Exception ex, WebRequest request) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

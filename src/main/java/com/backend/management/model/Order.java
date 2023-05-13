@@ -99,7 +99,9 @@ public class Order implements Serializable {
         this.completeDate = completeDate;
     }
 
-
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
     public static class Builder {
 

@@ -13,7 +13,6 @@ public interface OrderRepository extends JpaRepository<Order, Long>{
     List<Order> findByTenant(User user);
     Order findByIdAndTenant(Long id, User tenant);
 
-    List<Order> findByProvider(User provider);
     @Query("SELECT u FROM Order u WHERE u.status = :status")
     List<Order> findAllByStatus(@Param("status") String status);
 
