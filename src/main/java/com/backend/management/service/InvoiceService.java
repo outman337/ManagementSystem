@@ -3,8 +3,10 @@ package com.backend.management.service;
 import com.backend.management.exception.InvoiceNotExistException;
 import com.backend.management.exception.MoveException;
 import com.backend.management.exception.UserNotExistException;
+import com.backend.management.model.Apartment;
 import com.backend.management.model.Invoice;
 import com.backend.management.model.User;
+import com.backend.management.repository.ApartmentRepository;
 import com.backend.management.repository.InvoiceRepository;
 import com.backend.management.repository.UserRepository;
 import net.bytebuddy.asm.Advice;
@@ -20,9 +22,12 @@ import java.util.Optional;
 public class InvoiceService {
     private InvoiceRepository invoiceRepository;
     private UserRepository userRepository;
-    public InvoiceService(InvoiceRepository invoiceRepository, UserRepository userRepository) {
+    private ApartmentRepository apartmentRepository;
+    public InvoiceService(InvoiceRepository invoiceRepository, UserRepository userRepository,
+                          ApartmentRepository apartmentRepository) {
         this.invoiceRepository = invoiceRepository;
         this.userRepository = userRepository;
+        this.apartmentRepository = apartmentRepository;
     }
 
     public void add(Invoice invoice, String managerId, String tenantId) {
@@ -71,5 +76,20 @@ public class InvoiceService {
 
     public List<Invoice> getAllInvoice() {
         return invoiceRepository.findAll();
+    }
+
+    public void addAll(Invoice invoice, String managerId) {
+        if (invoice != null) {
+            List<Apartment> apartments = apartmentRepository.findAll();
+            for (Apartment apartment : apartments) {
+                if (apartment.getOwnerId() != null) {
+                    Invoice newInvoice = new Invoice();
+                    newInvoice.setInvoiceName(invoice.getInvoiceName());
+                    newInvoice.setDueDate(invoice.getDueDate());
+                    newInvoice.setAmount(invoice.getAmount());
+                    add(newInvoice, managerId, apartment.getOwnerId().getUsername());
+                }
+            }
+        }
     }
 }

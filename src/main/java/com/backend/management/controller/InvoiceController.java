@@ -25,12 +25,18 @@ public class InvoiceController {
 
     @PostMapping(value = "/payment/add")
     public void addInvoice(@RequestBody Invoice invoice, @RequestParam(name = "manager_id") String managerId,
-            @RequestParam(name = "tenant_id") String tenantId) {
+                           @RequestParam(name = "tenant_id") String tenantId) {
         invoiceService.add(invoice, managerId, tenantId);
+    }
+
+    @PostMapping(value = "/payment/add/all")
+    public void addAllInvoice(@RequestBody Invoice invoice, @RequestParam(name = "manager_id") String managerId) {
+        invoiceService.addAll(invoice, managerId);
     }
 
     @PostMapping(value = "/payment/update")
     public void modifyStatus(@RequestBody Invoice invoice) {
         invoiceService.modify(invoice);
     }
+
 }
