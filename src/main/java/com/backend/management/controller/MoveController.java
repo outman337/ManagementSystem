@@ -62,4 +62,11 @@ public class MoveController {
     public MoveService.ApartmentInfo getApartmentInfoByApartmentNumber(String apartmentNumber) {
         return moveService.getApartmentAndTenantsByApartmentNumber(apartmentNumber);
     }
+
+    @GetMapping("getAllApartments")
+    public List<String> getAllApartments() {return moveService.getAllApartments();}
+
+    @GetMapping("getAllTenants")
+    public List<String> getAllTenants() {return moveService.getAllTenants();}
+
 }

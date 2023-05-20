@@ -6,6 +6,7 @@ import com.backend.management.model.Apartment;
 import com.backend.management.model.User;
 import com.backend.management.repository.ApartmentRepository;
 import com.backend.management.repository.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +62,15 @@ public class MoveService {
         move(username, null, newOwner);
     }
 
+    public List<String> getAllApartments() {
+        List<Apartment> apartments = apartmentRepository.findAll();
+        return apartments.stream().map(Apartment::getApartmentId).collect(Collectors.toSet()).stream().sorted().collect(Collectors.toList());
+    }
+
+    public List<String> getAllTenants() {
+        List<User> tenant = userRepository.getAllTenants();
+        return tenant.stream().map(User::getUsername).collect(Collectors.toSet()).stream().sorted().collect(Collectors.toList());
+    }
     public List<String> findApartmentsWithVacancy(){
         List<Apartment> apartments = apartmentRepository.apartmentsWithVacancy();
         return apartments.stream().map(Apartment::getApartmentId).collect(Collectors.toSet()).stream().sorted().collect(Collectors.toList());
