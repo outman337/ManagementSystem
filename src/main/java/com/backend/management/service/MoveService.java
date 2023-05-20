@@ -136,8 +136,11 @@ public class MoveService {
         //TODO: simplify this
         if (apartmentAndTenants.size() == 0) {
             User user = userRepository.findById(username).orElse(null);
-            if (user == null || user.getApartmentNumber() == null) {
-                throw new ApartmentNotExistException("Apartment does not exist.");
+            if (user == null) {
+                throw new ApartmentNotExistException("User does not exist.");
+            }
+            if (user.getApartmentNumber() == null) {
+                throw new ApartmentNotExistException("User has not moved in yet.");
             }
             return new ApartmentInfo(
                     user.getApartmentNumber().getApartmentId(),
