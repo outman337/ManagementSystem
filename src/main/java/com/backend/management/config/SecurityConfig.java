@@ -19,7 +19,6 @@ import javax.sql.DataSource;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final DataSource dataSource;
-
     private final JwtFilter jwtFilter;
 
     public SecurityConfig(DataSource dataSource, JwtFilter jwtFilter) {
@@ -36,8 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/announcements").hasAnyAuthority("ROLE_TENANT", "ROLE_MANAGER")
                 .antMatchers("/announcement/*").hasAuthority("ROLE_MANAGER")
                 .antMatchers("/announcement").hasAuthority("ROLE_MANAGER")
-                .antMatchers("/post").hasAuthority("ROLE_TENANT")
-                .antMatchers("/post/*").hasAuthority("ROLE_TENANT")
+                .antMatchers("/post").hasAnyAuthority("ROLE_TENANT", "ROLE_MANAGER")
+                .antMatchers("/post/*").hasAnyAuthority("ROLE_TENANT", "ROLE_MANAGER")
                 .antMatchers("/posts").hasAnyAuthority("ROLE_TENANT", "ROLE_MANAGER")
                 .antMatchers("/moveIn").hasAuthority("ROLE_MANAGER")
                 .antMatchers("/moveInAndAssignNewOwner").hasAuthority("ROLE_MANAGER")

@@ -30,27 +30,27 @@ public class PostController {
 
         LocalDate postDate = LocalDate.now();
 
-        Post post1 = new Post.Builder()
+        Post pos = new Post.Builder()
                 .setCategory(post.getCategory())
                 .setContent(post.getContent())
                 .setPostTitle(post.getPostTitle())
                 .setTime(postDate)
-                .setTenantId(new User.Builder().setUsername(principal.getName()).build())
+                .setUserId(new User.Builder().setUsername(principal.getName()).build())
                 .build();
 
-        postService.add(post1);
+        postService.add(pos);
     }
 
-    //2.get post by tenant
+    //2.get post by user
     @GetMapping(value = "/post")
     public List<Post> listPosts(Principal principal) {
-        return postService.postByTenant(principal.getName());
+        return postService.postByUser(principal.getName());
     }
 
     //3.get post by id
     @GetMapping(value = "/post/{postId}")
     public Post getPost(@PathVariable Long postId, Principal principal) {
-        return postService.findByIdAndTenant(postId, principal.getName());
+        return postService.findByIdAndUser(postId, principal.getName());
     }
 
     //4.delete post by id

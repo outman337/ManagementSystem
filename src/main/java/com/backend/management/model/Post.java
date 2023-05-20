@@ -19,8 +19,8 @@ public class Post implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "tenant")
-    private User tenantId;
+    @JoinColumn(name = "user")
+    private User userId;
 
     @JsonProperty("title")
     private String postTitle;
@@ -32,7 +32,7 @@ public class Post implements Serializable {
     public Post() {}
     private Post(Builder builder) {
         this.id = builder.id;
-        this.tenantId = builder.tenantId;
+        this.userId = builder.userId;
         this.postTitle = builder.postTitle;
         this.category = builder.category;
         this.content = builder.content;
@@ -43,8 +43,8 @@ public class Post implements Serializable {
         return id;
     }
 
-    public User getTenantId() {
-        return tenantId;
+    public User getUserId() {
+        return userId;
     }
 
     public String getPostTitle() {
@@ -67,8 +67,8 @@ public class Post implements Serializable {
         @JsonProperty("id")
         private Long id;
 
-        @JsonProperty("tenant")
-        private User tenantId;
+        @JsonProperty("user")
+        private User userId;
 
         @JsonProperty("title")
         private String postTitle;
@@ -87,8 +87,8 @@ public class Post implements Serializable {
             return this;
         }
 
-        public Builder setTenantId(User tenantId) {
-            this.tenantId = tenantId;
+        public Builder setUserId(User userId) {
+            this.userId = userId;
             return this;
         }
 

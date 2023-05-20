@@ -23,17 +23,17 @@ public class PostService {
         postRepository.save(post);
     }
 
-    //2.post by tenant
-    public List<Post> postByTenant(String username) {
+    //2.post by user
+    public List<Post> postByUser(String username) {
         User.Builder userBuilder = new User.Builder();
         userBuilder.setUsername(username);
         User user = userBuilder.build();
-        return postRepository.findByTenantId(user);
+        return postRepository.findByUserId(user);
     }
 
     //3.get post by id
-    public Post findByIdAndTenant(Long postId, String username) throws PostNotExistException {
-        Post post = postRepository.findByIdAndTenantId(postId, new User.Builder().setUsername(username).build());
+    public Post findByIdAndUser(Long postId, String username) throws PostNotExistException {
+        Post post = postRepository.findByIdAndUserId(postId, new User.Builder().setUsername(username).build());
 
         if(post == null) {
             throw new PostNotExistException("Post doesn't exist");
@@ -44,7 +44,7 @@ public class PostService {
     //4.delete post by id
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(Long postId, String username) throws PostNotExistException {
-        Post post = postRepository.findByIdAndTenantId(postId, new User.Builder().setUsername(username).build());
+        Post post = postRepository.findByIdAndUserId(postId, new User.Builder().setUsername(username).build());
 
         if(post == null) {
             throw new PostNotExistException("Post doesn't exist");
