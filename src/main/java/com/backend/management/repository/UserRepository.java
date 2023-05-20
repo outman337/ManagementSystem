@@ -21,5 +21,8 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query ("SELECT u FROM User u where u.apartmentNumber!=NULL")
     List<User> getTenantsWithApartments();
 
+    @Query ("SELECT u FROM User u JOIN Authority a on a.username = u.username WHERE a.authority='ROLE_TENANT'")
+    List<User> getAllTenants();
+
 }
 

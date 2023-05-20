@@ -6,6 +6,7 @@ import com.backend.management.model.Apartment;
 import com.backend.management.model.User;
 import com.backend.management.repository.ApartmentRepository;
 import com.backend.management.repository.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,9 +62,47 @@ public class MoveService {
         move(username, null, newOwner);
     }
 
-    public List<String> findApartmentsWithVacancy(){
-        List<Apartment> apartments = apartmentRepository.apartmentsWithVacancy();
+    public List<String> getAllApartments() {
+        List<Apartment> apartments = apartmentRepository.findAll();
         return apartments.stream().map(Apartment::getApartmentId).collect(Collectors.toSet()).stream().sorted().collect(Collectors.toList());
+    }
+
+    public List<String> getAllTenants() {
+        List<User> tenants = userRepository.getAllTenants();
+        return tenants.stream().map(User::getUsername).collect(Collectors.toSet()).stream().sorted().collect(Collectors.toList());
+    }
+    public List<String> findApartmentsWithVacancy(){
+        List<Apartment> apartments = apartmentRepository.findAll();
+        List<User> tenants = userRepository.getAllTenants();
+
+        // loop through apartments and make a map of apartmentNumber to int (initially zero)
+        Map<String, Integer> apartmentOccupantsCountMap = new HashMap<>();
+        for (Apartment a : apartments) {
+            apartmentOccupantsCountMap.put(a.getApartmentId(), 0);
+        }
+
+        // loop through tenants and each time they have an apartment number, increment the number in the above map
+        for (User u : tenants) {
+            if (u.getApartmentNumber() != null) {
+                int count = apartmentOccupantsCountMap.get(u.getApartmentNumber().getApartmentId());
+                count++;
+                apartmentOccupantsCountMap.put(u.getApartmentNumber().getApartmentId(), count);
+            }
+        }
+
+        // make an empty list of strings
+        List<String> apartmentsWithVacancy = new ArrayList<>();
+
+        // Now loop through apartments again and check each one against the map. If their apartment type's capacity is
+        // greater than the count in that map, put that apartmentNumber in the list
+        for (Apartment a : apartments) {
+            if (a.getApartmentType().getCapacity() > apartmentOccupantsCountMap.get(a.getApartmentId())) {
+                apartmentsWithVacancy.add(a.getApartmentId());
+            }
+        }
+
+        // return the list
+        return apartmentsWithVacancy.stream().sorted().collect(Collectors.toList());
     }
 
     public List<String> getTenantsWithoutApartments() {
@@ -136,8 +175,11 @@ public class MoveService {
         //TODO: simplify this
         if (apartmentAndTenants.size() == 0) {
             User user = userRepository.findById(username).orElse(null);
-            if (user == null || user.getApartmentNumber() == null) {
-                throw new ApartmentNotExistException("Apartment does not exist.");
+            if (user == null) {
+                throw new ApartmentNotExistException("User does not exist.");
+            }
+            if (user.getApartmentNumber() == null) {
+                throw new ApartmentNotExistException("User has not moved in yet.");
             }
             return new ApartmentInfo(
                     user.getApartmentNumber().getApartmentId(),
