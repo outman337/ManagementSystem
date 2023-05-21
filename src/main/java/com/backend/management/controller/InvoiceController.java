@@ -49,12 +49,12 @@ public class InvoiceController {
         invoiceService.addCategory(invoice, managerId, apartType, invoiceType);
     }
 
-    @PostMapping(value = "/payment/add/category")
-    public void add(@RequestBody Invoice invoice, @RequestParam(name = "manager_id") String managerId,
-                    @RequestParam(name = "apart_type") String apartType,
-                    @RequestParam(name = "invoice_type") String invoiceType) {
-        invoiceService.addCategory(invoice, managerId, apartType, invoiceType);
-    }
+//    @PostMapping(value = "/payment/add/category")
+//    public void add(@RequestBody Invoice invoice, @RequestParam(name = "manager_id") String managerId,
+//                    @RequestParam(name = "apart_type") String apartType,
+//                    @RequestParam(name = "invoice_type") String invoiceType) {
+//        invoiceService.addCategory(invoice, managerId, apartType, invoiceType);
+//    }
 
     @PostMapping(value = "/payment/update")
     public void modifyStatus(@RequestBody Invoice invoice) {
