@@ -43,8 +43,8 @@ public class Post implements Serializable {
         return id;
     }
 
-    public User getUserId() {
-        return userId;
+    public String getUserId() {
+        return userId.getUsername();
     }
 
     public String getPostTitle() {
