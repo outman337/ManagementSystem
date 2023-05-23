@@ -6,7 +6,6 @@ import com.backend.management.model.Apartment;
 import com.backend.management.model.User;
 import com.backend.management.repository.ApartmentRepository;
 import com.backend.management.repository.UserRepository;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,22 +115,24 @@ public class MoveService {
     }
 
     //TODO: make a record?
-    public static class ApartmentInfo {
+    public record ApartmentInfo(String apartmentNumber, List<String> tenants, String owner, String apartmentType) { }
 
-        public final String apartmentNumber;
-        public final List<String> tenants;
+    private ApartmentInfo getApartmentInfo(List<Object[]> apartmentAndTenants) {
+        List<String> tenants = new ArrayList<>();
+        Apartment apartment = null;
 
-        public final String owner;
-
-        public final String apartmentType;
-
-
-        public ApartmentInfo(String apartmentNumber, List<String> tenants, String owner, String apartmentType) {
-            this.apartmentNumber = apartmentNumber;
-            this.tenants = tenants;
-            this.owner = owner;
-            this.apartmentType = apartmentType;
+        for (Object[] objects : apartmentAndTenants) {
+            apartment = (Apartment) objects[0];
+            User tenant = (User) objects[1];
+            tenants.add(tenant.getUsername());
         }
+
+        return new ApartmentInfo(
+                apartment.getApartmentId(),
+                new HashSet<>(tenants).stream().sorted().collect(Collectors.toList()),
+                apartment.getOwnerId().getUsername(),
+                apartment.getApartmentType().getTypeId()
+        );
     }
 
     public ApartmentInfo getApartmentAndTenantsByApartmentNumber(String apartmentId) {
@@ -151,22 +152,9 @@ public class MoveService {
             );
         }
 
-        List<String> tenants = new ArrayList<>();
-        Apartment apartment = null;
-
-        for (Object[] objects : apartmentAndTenants) {
-            apartment = (Apartment) objects[0];
-            User tenant = (User) objects[1];
-            tenants.add(tenant.getUsername());
-        }
-
-        return new ApartmentInfo(
-                apartment.getApartmentId(),
-                new HashSet<>(tenants).stream().sorted().collect(Collectors.toList()),
-                apartment.getOwnerId().getUsername(),
-                apartment.getApartmentType().getTypeId()
-        );
+        return getApartmentInfo(apartmentAndTenants);
     }
+
 
     public ApartmentInfo getApartmentAndTenantsByUsername(String username) {
 
@@ -189,21 +177,7 @@ public class MoveService {
             );
         }
 
-        List<String> tenants = new ArrayList<>();
-        Apartment apartment = null;
-
-        for (Object[] objects : apartmentAndTenants) {
-            apartment = (Apartment) objects[0];
-            User tenant = (User) objects[1];
-            tenants.add(tenant.getUsername());
-        }
-
-        return new ApartmentInfo(
-                apartment.getApartmentId(),
-                new HashSet<>(tenants).stream().sorted().collect(Collectors.toList()),
-                apartment.getOwnerId().getUsername(),
-                apartment.getApartmentType().getTypeId()
-        );
+        return getApartmentInfo(apartmentAndTenants);
     }
 
     private void move(String username, String newApartmentNumber, String newOwnerUsername) {
