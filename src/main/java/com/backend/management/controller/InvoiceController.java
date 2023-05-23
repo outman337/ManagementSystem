@@ -42,6 +42,7 @@ public class InvoiceController {
         invoiceService.addCategory(invoice, principal.getName(), apartType, invoiceType);
     }
 
+
 //    @PostMapping(value = "/payment/add/category")
 //    public void add(@RequestBody Invoice invoice, @RequestParam(name = "manager_id") String managerId,
 //                    @RequestParam(name = "apart_type") String apartType,
